@@ -9,5 +9,5 @@ def handle_reponse(resp_data):
     if all_matches is None:
         raise TaskException('获得的全部比赛数据有误')
     matches = filter(lambda x: x['start_time'] >= 1470240000, all_matches)
-    # TODO need to return custom Task object
+    # TODO need to return MatchTask object
     return matches
