@@ -32,7 +32,7 @@ class InitTask(AbstractTask):
     async def run(self):
         async with aiohttp.request('GET', url) as resp:
             try:
-                await resp_data = resp.json()
+                resp_data = await resp.json()
                 tasks = self.handle_response(resp_data)
                 async for task in tasks:
                     await self.queue.put(tasks)
@@ -56,7 +56,7 @@ class MatchTask(AbstractTask):
     async def run(self):
         async with aiohttp.request('GET', url) as resp:
             try:
-                await resp_data = resp.json()
+                resp_data = await resp.json()
                 # TODO
                 pass
             except TaskException as e:
@@ -66,5 +66,6 @@ class MatchTask(AbstractTask):
 
 class DataBaseTask(AbstractTask):
 
-    def __init__(self):
+    def __init__(self, engine):
+        self.engine = engine
         pass
