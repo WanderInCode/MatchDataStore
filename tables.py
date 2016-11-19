@@ -1,6 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column
-from sqlalchemy.dialects.mysql import BIGINT, NVARCHAR, DATETIME, INTEGER, BOOLEAN
+from sqlalchemy.dialects.mysql import BIGINT, NVARCHAR, DATETIME, INTEGER, BOOLEAN, TINYINT, FLOAT
 
 Base = declarative_base()
 
@@ -43,3 +43,20 @@ class Match(Base):
 class MatchDetail(Base):
 
     __tablename__ = 'match_detail'
+
+    match_id = Column(BIGINT, primary_key=True)
+    account_id = Column(BIGINT, nullable=False)
+    player_slot = Column(TINYINT, nullable=False)
+    kills = Column(INTEGER, nullable=False)
+    deaths = Column(INTEGER, nullable=False)
+    assists = Column(INTEGER, nullable=False)
+    last_hits = Column(INTEGER, nullable=False)
+    denies = Column(INTEGER, nullable=False)
+    gold_per_min = Column(FLOAT, nullable=False)
+    xp_per_min = Column(FLOAT, nullable=False)
+    level = Column(TINYINT, nullable=False)
+    hero_damage = Column(INTEGER, nullable=False)
+    tower_damage = Column(INTEGER, nullable=False)
+    hero_healing = Column(INTEGER, nullable=False)
+    gold = Column(INTEGER, nullable=False)
+    gold_spent = Column(INTEGER, nullable=False)
