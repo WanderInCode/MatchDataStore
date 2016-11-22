@@ -44,7 +44,7 @@ class InitTask(AbstractTask):
                 await self.queue.put(None)
 
 
-class MatchTask(AbstractTask):
+class AcquisitionTask(AbstractTask):
 
     def __init__(self, url):
         AbstractTask.__init__(self)
@@ -64,7 +64,9 @@ class MatchTask(AbstractTask):
                 await self.queue.put(None)
 
 
-class DataBaseTask(AbstractTask):
+class StoreTask(AbstractTask):
+
+    store_list = []
 
     def __init__(self, engine):
         self.engine = engine
