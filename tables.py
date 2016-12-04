@@ -14,6 +14,12 @@ class Team(Base):
     team_tag = Column(NVARCHAR(10))
     team_name = Column(NVARCHAR(25))
 
+    def __init__(self, item):
+        self.league_id = item['league_id']
+        self.team_id = item['team_id']
+        self.team_tag = item['team_tag']
+        self.team_name = item['team_name']
+
 
 class Player(Base):
 
@@ -38,6 +44,7 @@ class Match(Base):
     dire_team_id = Column(BIGINT, nullable=False)
     radiant_score = Column(INTEGER, nullable=False)
     dire_score = Column(INTEGER, nullable=False)
+    cluster = Column(INTEGER, nullable=False)
 
 
 class MatchDetail(Base):
@@ -47,6 +54,7 @@ class MatchDetail(Base):
     match_id = Column(BIGINT, primary_key=True)
     account_id = Column(BIGINT, nullable=False)
     player_slot = Column(TINYINT, nullable=False)
+    hero_id = Column(INTEGER, nullable=False)
     kills = Column(INTEGER, nullable=False)
     deaths = Column(INTEGER, nullable=False)
     assists = Column(INTEGER, nullable=False)
