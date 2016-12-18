@@ -16,6 +16,9 @@ class AbstractTask:
     def set_queue(self, queue):
         self._queue = queue
 
+    def get_queue(self):
+        return self._queue
+
     async def enqueue(self):
         if not getattr(self, '_queue', None):
             raise AttributeError('queue is not set!')
@@ -40,7 +43,8 @@ class InitTask(AbstractTask):
                 resp_data = await resp.json()
                 tasks = self.handle_response(resp_data)
                 async for task in tasks:
-                    await self._queue.put(task)
+                    task.set_queue(self.get_queue())
+                    await task.enqueue()
                 return len(tasks)
             except TaskError as e:
                 self._logger.error(e)
@@ -65,7 +69,8 @@ class AcquisitionTask(AbstractTask):
                     tasks = self.handle_response(resp_data)
                     task_length += len(tasks)
                     async for task in tasks:
-                        await self._queue.put(task)
+                        task.set_queue(self.get_queue())
+                        await task.enqueue()
                 except TaskError as e:
                     self._logger.error(e.args)
                     raise
@@ -96,13 +101,13 @@ class ImmediateStoreTask(StoreTask):
         try:
             session.add_all(self._data_list)
             session.commit()
+            return 0
         except DBAPIError as e:
             session.rollback()
             self._logger.error(e)
             raise
         finally:
             session.close()
-            return 0
 
 
 class DelayStoreTask(StoreTask):
@@ -123,6 +128,10 @@ class DelayStoreTask(StoreTask):
         else:
             await StoreTask.enqueue(self)
             self.__class__._in_queue = True
+
+    @classmethod
+    def set_queue(cls, queue):
+        cls._queue = queue
 
     @classmethod
     def _set_store(cls, store_type, data_list):
@@ -170,6 +179,5 @@ class DelayStoreTask(StoreTask):
             finally:
                 session.close()
         else:
-            await self.__class__._queue.put(self)
-            self.__class__._in_queue = True
+            await self.enqueue()
             return 0

@@ -10,3 +10,5 @@ match_url = 'https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/v1/?ke
 
 detail_url = 'http://api.steampowered.com/IDOTA2Match_570/GetMatchDetails/v1/?key={}&match_id={}'.format(
     key, '{}')
+
+player_name_url = 'http://api.opendota.com/api/players/{}'

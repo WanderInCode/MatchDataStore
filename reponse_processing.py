@@ -6,6 +6,9 @@ from utils import Utils
 import config
 
 
+players = set()
+
+
 def handle_team_reponse(resp_data):
     teams = resp_data.get('teams')
     if teams is None:
@@ -36,4 +39,7 @@ def handle_match_reponse(resp_data):
 
 
 def handle_detail_reponse(resp_data):
-    pass
+    result = resp_data.get('result')
+    if result is None:
+        raise TaskError('获得的详细比赛数据有误')
+    # TODO

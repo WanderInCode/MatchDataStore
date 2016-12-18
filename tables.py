@@ -52,7 +52,7 @@ class MatchDetail(Base):
     __tablename__ = 'match_detail'
 
     match_id = Column(BIGINT, primary_key=True)
-    account_id = Column(BIGINT, nullable=False)
+    account_id = Column(BIGINT, primary_key=True)
     player_slot = Column(TINYINT, nullable=False)
     hero_id = Column(INTEGER, nullable=False)
     kills = Column(INTEGER, nullable=False)
