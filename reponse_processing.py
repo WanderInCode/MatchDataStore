@@ -4,9 +4,7 @@ from tasks import InitTask, AcquisitionTask, ImmediateStoreTask, DelayStoreTask
 import utils
 from utils import Utils
 import config
-
-
-players = set()
+import players
 
 
 def handle_team_reponse(resp_data):
@@ -42,4 +40,16 @@ def handle_detail_reponse(resp_data):
     result = resp_data.get('result')
     if result is None:
         raise TaskError('获得的详细比赛数据有误')
-    # TODO
+    match = dict()
+    match['match_id'] = result['match_id']
+    match['league_id'] = result['leagueid']
+    match['start_time'] = result['start_time']
+    match['duration'] = result['duration']
+    match['radiant_win'] = result['radiant_win']
+    match['radiant_team_id'] = result['radiant_team_id']
+    match['dire_team_id'] = result['dire_team_id']
+    match['radiant_score'] = result['radiant_score']
+    match['dire_score'] = result['dire_score']
+    match['cluster'] = result['cluster']
+    match_table = Match(match)
+    detail = dict()

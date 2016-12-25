@@ -171,6 +171,7 @@ class DelayStoreTask(StoreTask):
                 session.add_all(store_list)
                 session.commit()
                 self._clear_store()
+                self.__class__._in_queue = False
                 return 0
             except DBAPIError as e:
                 session.rollback()
