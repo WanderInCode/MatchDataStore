@@ -15,10 +15,8 @@ class Team(Base):
     team_name = Column(NVARCHAR(25))
 
     def __init__(self, item):
-        self.league_id = item['league_id']
-        self.team_id = item['team_id']
-        self.team_tag = item['team_tag']
-        self.team_name = item['team_name']
+        for name, value in item.items():
+            setattr(self, name, value)
 
 
 class Player(Base):
@@ -29,6 +27,10 @@ class Player(Base):
     account_id = Column(BIGINT, primary_key=True)
     team_id = Column(BIGINT, nullable=False)
     player_name = Column(NVARCHAR(25))
+
+    def __init__(self, item):
+        for name, value in item.items():
+            setattr(self, name, value)
 
 
 class Match(Base):
@@ -45,6 +47,10 @@ class Match(Base):
     radiant_score = Column(INTEGER, nullable=False)
     dire_score = Column(INTEGER, nullable=False)
     cluster = Column(INTEGER, nullable=False)
+
+    def __init__(self, item):
+        for name, value in item.items():
+            setattr(self, name, value)
 
 
 class MatchDetail(Base):
@@ -68,3 +74,7 @@ class MatchDetail(Base):
     hero_healing = Column(INTEGER, nullable=False)
     gold = Column(INTEGER, nullable=False)
     gold_spent = Column(INTEGER, nullable=False)
+
+    def __init__(self, item):
+        for name, value in item.items():
+            setattr(self, name, value)

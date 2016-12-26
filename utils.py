@@ -19,5 +19,4 @@ logging.basicConfig(
     level=20)
 logger = logging.getLogger()
 
-IMMEDIATE = 'Immediate'
-DELAY = 'delay'
+players = dict()

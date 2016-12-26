@@ -12,3 +12,7 @@ detail_url = 'http://api.steampowered.com/IDOTA2Match_570/GetMatchDetails/v1/?ke
     key, '{}')
 
 player_name_url = 'http://api.opendota.com/api/players/{}'
+
+CONNECT_STRING = 'mysql+pymysql://dota:123456@localhost/dota'
+IMMEDIATE = 'Immediate'
+DELAY = 'delay'

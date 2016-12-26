@@ -47,7 +47,10 @@ class InitTask(AbstractTask):
                     await task.enqueue()
                 return len(tasks)
             except TaskError as e:
-                self._logger.error(e)
+                self._logger.error(e, exc_info=True)
+                raise
+            except Exception as e:
+                self._logger.error(e, exc_info=True)
                 raise
 
 
@@ -72,7 +75,10 @@ class AcquisitionTask(AbstractTask):
                         task.set_queue(self.get_queue())
                         await task.enqueue()
                 except TaskError as e:
-                    self._logger.error(e.args)
+                    self._logger.error(e, exc_info=True)
+                    raise
+                except Exception as e:
+                    self._logger.error(e, exc_info=True)
                     raise
         return task_length
 
@@ -104,7 +110,11 @@ class ImmediateStoreTask(StoreTask):
             return 0
         except DBAPIError as e:
             session.rollback()
-            self._logger.error(e)
+            self._logger.error(e, exc_info=True)
+            raise
+        except Exception as e:
+            session.rollback()
+            self._logger.error(e, exc_info=True)
             raise
         finally:
             session.close()
@@ -123,11 +133,11 @@ class DelayStoreTask(StoreTask):
         self._Session = Session
 
     async def enqueue(self):
-        if self.__class__._in_queue:
+        if self._in_queue:
             return
         else:
             await StoreTask.enqueue(self)
-            self.__class__._in_queue = True
+            self._in_queue = True
 
     @classmethod
     def set_queue(cls, queue):
@@ -150,10 +160,10 @@ class DelayStoreTask(StoreTask):
         cls._set_store(store_type, data_list)
 
     def _clear_store(self):
-        self.__class__._store[self._store_type].clear()
+        self._store[self._store_type].clear()
 
     def _get_store_list(self):
-        store = self.__class__._store[self._store_type]
+        store = self._store[self._store_type]
         store_list = list()
         for k, v in store.items():
             store_list.extend(v)
@@ -164,21 +174,31 @@ class DelayStoreTask(StoreTask):
         if len(store_list) == 0:
             return 0
         elif len(store_list) >= 20:
-            self._logger.info(
-                'DelayStoreTask: store {} tables'.format(len(store_list)))
-            session = self._Session()
-            try:
-                session.add_all(store_list)
-                session.commit()
-                self._clear_store()
-                self.__class__._in_queue = False
-                return 0
-            except DBAPIError as e:
-                session.rollback()
-                self._logger.error(e)
-                raise
-            finally:
-                session.close()
+            return self._save_tables(store_list)
         else:
             await self.enqueue()
             return 0
+
+    def immediate_run(self):
+        return self._save_tables(self._get_store_list())
+
+    def _save_tables(store_list):
+        self._logger.info(
+            'DelayStoreTask: store {} tables'.format(len(store_list)))
+        session = self._Session()
+        try:
+            session.add_all(store_list)
+            session.commit()
+            self._clear_store()
+            self._in_queue = False
+            return 0
+        except DBAPIError as e:
+            session.rollback()
+            self._logger.error(e, exc_info=True)
+            raise
+        except Exception as e:
+            session.rollback()
+            self._logger.error(e, exc_info=True)
+            raise
+        finally:
+            session.close()

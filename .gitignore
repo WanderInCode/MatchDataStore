@@ -92,3 +92,4 @@ ENV/
 test.py
 test1.py
 key.py
+/test
